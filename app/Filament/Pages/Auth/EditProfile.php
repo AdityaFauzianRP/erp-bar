@@ -39,18 +39,19 @@ class EditProfile extends Page implements HasForms
         return $schema
             ->schema([
                 // --- BAGIAN CABANG AKTIF ---
-                ComponentsSection::make('Lokasi Kerja')
-                    ->description('Pilih cabang mana yang ingin Anda aktifkan saat ini.')
-                    ->aside()
-                    ->schema([
-                        Select::make('active_branch_id')
-                            ->label('Cabang Aktif')
-                            ->options(fn () => auth()->user()->branches->pluck('name', 'id'))
-                            ->helperText('Semua transaksi yang Anda buat akan dicatat pada cabang ini.')
-                            ->required()
-                            ->native(false) // Tampilan lebih modern
-                            ->searchable(),
-                    ]),
+                // ComponentsSection::make('Lokasi Kerja')
+                //     ->description('Pilih cabang mana yang ingin Anda aktifkan saat ini.')
+                //     ->aside()
+                //     ->schema([
+                //         Select::make('active_branch_id')
+                //             ->label('Cabang Aktif')
+                //             ->options(fn () => auth()->user()->branches->pluck('name', 'id'))
+                //             ->helperText('Semua transaksi yang Anda buat akan dicatat pada cabang ini.')
+                //             ->required()
+                //             ->disabled()
+                //             ->native(false) // Tampilan lebih modern
+                //             ->searchable(),
+                //     ]),
 
                 // --- INFORMASI PRIBADI ---
                 ComponentsSection::make('Informasi Pribadi')
@@ -100,7 +101,7 @@ class EditProfile extends Page implements HasForms
         $updateData = [
             'name' => $data['name'],
             'email' => $data['email'],
-            'active_branch_id' => $data['active_branch_id'], // Simpan cabang aktif
+            // 'active_branch_id' => $data['active_branch_id'], // Simpan cabang aktif
         ];
 
         if (filled($data['new_password'])) {

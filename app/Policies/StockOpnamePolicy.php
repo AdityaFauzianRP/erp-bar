@@ -37,34 +37,4 @@ class StockOpnamePolicy
         return $authUser->can('Delete:StockOpname');
     }
 
-    public function restore(AuthUser $authUser, StockOpname $stockOpname): bool
-    {
-        return $authUser->can('Restore:StockOpname');
-    }
-
-    public function forceDelete(AuthUser $authUser, StockOpname $stockOpname): bool
-    {
-        return $authUser->can('ForceDelete:StockOpname');
-    }
-
-    public function forceDeleteAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('ForceDeleteAny:StockOpname');
-    }
-
-    public function restoreAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('RestoreAny:StockOpname');
-    }
-
-    public function replicate(AuthUser $authUser, StockOpname $stockOpname): bool
-    {
-        return $authUser->can('Replicate:StockOpname');
-    }
-
-    public function reorder(AuthUser $authUser): bool
-    {
-        return $authUser->can('Reorder:StockOpname');
-    }
-
 }

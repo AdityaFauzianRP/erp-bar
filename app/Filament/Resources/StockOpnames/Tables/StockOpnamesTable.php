@@ -3,15 +3,19 @@
 namespace App\Filament\Resources\StockOpnames\Tables;
 
 use App\Filament\Resources\StockOpnames\Pages\EditStockOpname;
+use App\Filament\Resources\StockOpnames\StockOpnameResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Illuminate\Database\Eloquent\Builder;
 
 class StockOpnamesTable
 {
@@ -60,33 +64,55 @@ class StockOpnamesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                // Filter berdasarkan Gudang
                 Tables\Filters\SelectFilter::make('warehouse_id')
                     ->relationship('warehouse', 'name')
-                    ->label('Filter Gudang'),
+                    ->label('Gudang')
+                    ->searchable()
+                    ->preload(),
 
+                // Filter berdasarkan Status
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Status Dokumen')
                     ->options([
                         'draft' => 'Draft',
                         'completed' => 'Completed',
                         'cancelled' => 'Cancelled',
                     ]),
-            ])
-            ->actions([
-                ViewAction::make(),
 
-                // Tombol Eksekusi Stok
+                // Filter Rentang Tanggal Opname
+                Tables\Filters\Filter::make('date_range')
+                    ->form([
+                        DatePicker::make('from')->label('Dari Tanggal'),
+                        DatePicker::make('until')->label('Sampai Tanggal'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['from'], fn($q, $date) => $q->whereDate('date', '>=', $date))
+                            ->when($data['until'], fn($q, $date) => $q->whereDate('date', '<=', $date));
+                    })
+                    ->columns(2)
+                    ->columnSpan(2),
+            ])
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersFormColumns(4)
+            ->actions([
+                // SEKARANG INI ADALAH Tables\Actions\Action
                 Action::make('complete')
                     ->label('Selesaikan Opname')
                     ->color('success')
                     ->icon('heroicon-m-check-circle')
-                    ->requiresConfirmation() // Menghindari klik tidak sengaja
+                    ->requiresConfirmation()
                     ->modalHeading('Konfirmasi Selesai')
-                    ->modalDescription('Setelah diselesaikan, stok di gudang akan diperbarui dan dokumen ini tidak bisa diedit lagi. Lanjutkan?')
-                    ->visible(fn($record) => $record->status === 'draft')
+                    ->modalDescription('Setelah diselesaikan, stok di gudang akan diperbarui...')
+                    ->visible(function ($record) {
+                        return $record->status === 'draft' &&
+                            auth()->user()->can('ApproveStockOpname');
+                    })
+                    // ->visible(fn($record) => $record->status === 'draft')
                     ->action(function ($record) {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($record) {
                             foreach ($record->items as $item) {
-                                // Update atau Buat data di tabel Inventory
                                 \App\Models\Inventory::updateOrCreate(
                                     [
                                         'warehouse_id' => $record->warehouse_id,
@@ -94,12 +120,10 @@ class StockOpnamesTable
                                         'branch_id' => $item->branch_id,
                                     ],
                                     [
-                                        'stock' => $item->physical_stock, // Ganti saldo lama dengan hasil hitung fisik
+                                        'stock' => $item->physical_stock,
                                     ]
                                 );
                             }
-
-                            // Ubah status dokumen agar tombol Edit & Selesaikan hilang
                             $record->update(['status' => 'completed']);
                         });
 
@@ -109,26 +133,11 @@ class StockOpnamesTable
                             ->send();
                     }),
 
-                EditAction::make()
-                    ->visible(fn($record) => $record->status === 'draft'),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                EditAction::make('edit')
+                    ->label('Lihat Detail'),
             ])
 
-            ->recordUrl(function ($record) {
-                // Jika status completed, arahkan ke View, jangan ke Edit
-                if ($record->status === 'completed') {
-                    return null; // ViewAction sudah otomatis diterapkan
-                }
 
-                // Jika masih draft, boleh ke halaman Edit
-                return EditStockOpname::getUrl([$record->id]);
-
-                // Atau jika ingin baris sama sekali TIDAK bisa diklik: return null;
-            })
-            ->defaultSort('created_at', 'desc'); // Tampilkan yang terbaru di paling atas
+            ->defaultSort('created_at', 'desc');
     }
 }

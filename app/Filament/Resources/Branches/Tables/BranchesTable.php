@@ -56,12 +56,12 @@ class BranchesTable
             ])
             ->actions([
                 ActionsEditAction::make(),
-                ActionsDeleteAction::make(),
-            ])
-            ->bulkActions([
-                ActionsBulkActionGroup::make([
-                    ActionsDeleteBulkAction::make(),
-                ]),
+                // ActionsDeleteAction::make(),
             ]);
+            // ->bulkActions([
+            //     ActionsBulkActionGroup::make([
+            //         ActionsDeleteBulkAction::make(),
+            //     ]),
+            // ]);
     }
 }

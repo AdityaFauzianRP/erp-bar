@@ -13,7 +13,10 @@ class ListCustomerInduks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Customer Induk Baru')
+                ->icon('heroicon-m-plus')
+                ->color('primary'),
         ];
     }
 }

@@ -37,34 +37,4 @@ class SupplierPolicy
         return $authUser->can('Delete:Supplier');
     }
 
-    public function restore(AuthUser $authUser, Supplier $supplier): bool
-    {
-        return $authUser->can('Restore:Supplier');
-    }
-
-    public function forceDelete(AuthUser $authUser, Supplier $supplier): bool
-    {
-        return $authUser->can('ForceDelete:Supplier');
-    }
-
-    public function forceDeleteAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('ForceDeleteAny:Supplier');
-    }
-
-    public function restoreAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('RestoreAny:Supplier');
-    }
-
-    public function replicate(AuthUser $authUser, Supplier $supplier): bool
-    {
-        return $authUser->can('Replicate:Supplier');
-    }
-
-    public function reorder(AuthUser $authUser): bool
-    {
-        return $authUser->can('Reorder:Supplier');
-    }
-
 }

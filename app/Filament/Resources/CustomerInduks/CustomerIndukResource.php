@@ -20,7 +20,7 @@ class CustomerIndukResource extends Resource
     protected static ?string $model = CustomerInduk::class;
 
     protected static string|BackedEnum|null $navigationIcon  = 'heroicon-o-building-office-2';
-    protected static ?string $navigationLabel = 'Customer';
+    protected static ?string $navigationLabel = 'Customer PT';
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
     protected static ?string $modelLabel = 'Data Customer';
@@ -39,8 +39,8 @@ class CustomerIndukResource extends Resource
     {
         return [
             // DAFTARKAN DI SINI
-            BranchesRelationManager::class,
-            PricesRelationManager::class,
+            // BranchesRelationManager::class,
+            // PricesRelationManager::class,
         ];
     }
 

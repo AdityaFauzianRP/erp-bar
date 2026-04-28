@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -57,19 +58,26 @@ class UserForm
                             ->required()
                             ->native(false),
 
-                        Select::make('branches')
-                            ->label('Kantor Cabang')
-                            // Kita buat static options, kunci di satu ID cabang saja
-                            ->options([
-                                '1' => 'PT BAR Tech (Pusat)', // Sesuaikan ID dan Nama Cabangnya
-                            ])
-                            // Karena tadi pakai multiple(), kita tetap pertahankan jika memang relasi di DB-nya belongsToMany
-                            ->multiple()
-                            ->default(['1']) // Langsung terpilih otomatis
-                            ->selectablePlaceholder(false) // Menghilangkan pilihan kosong
-                            ->disabled() // Opsional: Tambahkan ini jika user tidak boleh menggantinya sama sekali
-                            ->dehydrated() // Penting: Agar nilai yang di-disable tetap terkirim saat save
-                            ->helperText('User ini dikunci hanya untuk akses di kantor pusat.'),
+                        // Select::make('branches')
+                        //     ->label('Kantor Cabang')
+                        //     // Kita buat static options, kunci di satu ID cabang saja
+                        //     ->options([
+                        //         '1' => 'PT BAR Tech (Pusat)', // Sesuaikan ID dan Nama Cabangnya
+                        //     ])
+                        //     // Karena tadi pakai multiple(), kita tetap pertahankan jika memang relasi di DB-nya belongsToMany
+                        //     ->multiple()
+                        //     ->default(['1']) // Langsung terpilih otomatis
+                        //     ->selectablePlaceholder(false) // Menghilangkan pilihan kosong
+                        //     ->disabled() // Opsional: Tambahkan ini jika user tidak boleh menggantinya sama sekali
+                        //     ->dehydrated() // Penting: Agar nilai yang di-disable tetap terkirim saat save
+                        //     ->helperText('User ini dikunci hanya untuk akses di kantor pusat.')
+                        //     ->visibleOn('create'),
+
+                        // // Munculkan Placeholder (Teks statis) hanya saat Edit
+                        // Placeholder::make('branch_info')
+                        //     ->label('Kantor Cabang')
+                        //     ->content('PT BAR Tech (Pusat)')
+                        //     ->visibleOn('edit'),
                     ])
                     ->columnSpan(1),
             ])

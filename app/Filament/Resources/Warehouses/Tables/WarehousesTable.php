@@ -45,7 +45,6 @@ class WarehousesTable
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
             ]);
     }
 }

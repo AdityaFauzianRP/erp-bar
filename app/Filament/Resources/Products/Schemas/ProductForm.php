@@ -6,6 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
 
 class ProductForm
 {
@@ -23,19 +24,36 @@ class ProductForm
 
                     TextInput::make('name')
                         ->label('Nama Produk')
-                        ->required(),
+                        ->required()
+                        ->maxLength(255)
+                        // Mencegah spasi berlebih di depan/belakang agar tidak lolos validasi unique
+                        ->dehydrated(fn($state) => trim($state))
+                        ->unique(
+                            table: 'products', // Nama tabel Anda
+                            column: 'name',    // Nama kolom yang dicek
+                            ignoreRecord: true
+                        )
+                        ->validationMessages([
+                            'unique' => 'Nama produk ini sudah ada, silakan gunakan nama lain agar tidak redundan.',
+                        ]),
 
                     TextInput::make('hpp')
                         ->label('Harga Pokok (HPP)')
-                        ->numeric()
                         ->prefix('IDR')
-                        ->required(),
+                        ->required()
+                        // 1. Use mask only for the UI (display)
+                        ->mask(RawJs::make('$money($input, ",", ".", 0)'))
+                        ->stripCharacters(['.', ','])
+                        ->numeric()
+                        // 2. Ensure data sent to DB is a clean integer/float
+                        ->dehydrateStateUsing(fn($state) => (int) str_replace(['.', ','], '', $state))
+                        ->extraInputAttributes(['step' => 'any']),
 
-                    TextInput::make('harga_jual_default')
-                        ->label('Harga Jual Default')
-                        ->numeric()
-                        ->prefix('IDR')
-                        ->required(),
+                    // TextInput::make('harga_jual_default')
+                    //     ->label('Harga Jual Default')
+                    //     ->numeric()
+                    //     ->prefix('IDR')
+                    //     ->required(),
 
                     Select::make('unit_id')
                         ->label('Satuan')

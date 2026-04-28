@@ -17,11 +17,32 @@ use Filament\Tables\Table;
 class StockOpnameResource extends Resource
 {
     protected static ?string $model = StockOpname::class;
-    
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationLabel = 'Stock Opname';
     protected static ?string $pluralLabel     = 'Stock Opname';
     protected static string|\UnitEnum|null $navigationGroup = 'Inventory';
+
+    public static function getNavigationBadge(): ?string
+    {
+        // Tetap pertahankan pengecekan permission jika memang diperlukan
+        if (! auth()->user()->can('ApproveStockOpname')) {
+            return null;
+        }
+
+        // Mengubah query untuk menghitung kolom pending_change yang tidak NULL
+        return static::getModel()::where('status', 'Draft')
+            ->count() ?: null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        if (! auth()->user()->can('ApproveStockOpname')) {
+            return null;
+        }
+
+        return 'danger';
+    }
 
     public static function form(Schema $schema): Schema
     {

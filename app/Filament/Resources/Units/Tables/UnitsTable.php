@@ -5,7 +5,8 @@ namespace App\Filament\Resources\Units\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\EditAction as ActionsEditAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -52,15 +53,12 @@ class UnitsTable
                 //
             ])
             ->actions([
-                EditAction::make()
-                    ->iconButton(), // Versi ringkas agar hemat tempat
-                DeleteAction::make()
-                    ->iconButton(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                // Gunakan EditAction yang sudah diimport dari Tables
+                ActionsEditAction::make()
+                    ->label('Lanjutkan Proses') 
+                    ->icon('heroicon-m-arrow-right-circle')
+                    ->color('primary')
+                    ->button(), // PAKAI ->button() agar teks label keluar
             ])
             ->emptyStateHeading('Belum ada satuan')
             ->emptyStateDescription('Tambahkan satuan seperti Kg, Pcs, atau Box untuk produk Anda.')

@@ -13,7 +13,10 @@ class ListStockOpnames extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Stock Opname Baru')
+                ->icon('heroicon-m-plus')
+                ->color('primary'),
         ];
     }
 }

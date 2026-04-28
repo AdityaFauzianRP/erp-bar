@@ -2,16 +2,13 @@
 
 namespace App\Filament\Resources\CustomerInduks\Schemas;
 
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Grid as ComponentsGrid;
 use Filament\Schemas\Components\Section as ComponentsSection;
-use Filament\Schemas\Components\Tabs as ComponentsTabs;
-use Filament\Schemas\Components\Tabs\Tab as TabsTab;
 use Filament\Schemas\Schema;
 
 class CustomerIndukForm
@@ -20,113 +17,105 @@ class CustomerIndukForm
     {
         return $schema
             ->schema([
-                ComponentsTabs::make('Customer Details')
-                    ->tabs([
-                        // TAB 1: PROFIL & KONTAK
-                        TabsTab::make('Profil & Kontak')
-                            ->icon('heroicon-m-user-circle')
-                            ->schema([
-                                ComponentsSection::make('Identitas Perusahaan')
-                                    ->schema([
-                                        ComponentsGrid::make(2)->schema([
-                                            TextInput::make('code')
-                                                ->label('Kode Customer')
-                                                ->disabled()
-                                                ->placeholder('Otomatis')
-                                                ->prefixIcon('heroicon-m-qr-code'),
+                // SECTION 1: IDENTITAS UTAMA
+                ComponentsSection::make('Identitas Perusahaan')
+                    ->description('Informasi dasar dan legalitas customer.')
+                    ->icon('heroicon-m-building-office')
+                    ->collapsible()
+                    ->schema([
+                        ComponentsGrid::make(3)->schema([
+                            TextInput::make('code')
+                                ->label('Kode Customer')
+                                ->disabled()
+                                ->placeholder('Otomatis')
+                                ->prefixIcon('heroicon-m-qr-code'),
 
-                                            TextInput::make('name')
-                                                ->label('Nama Perusahaan')
-                                                ->required()
-                                                ->prefixIcon('heroicon-m-building-office'),
+                            TextInput::make('name')
+                                ->label('Nama Perusahaan')
+                                ->required()
+                                ->prefixIcon('heroicon-m-building-office-2'),
 
-                                            TextInput::make('alias')
-                                                ->label('Nama Alias')
-                                                ->placeholder('Nama beken/singkatan'),
+                            TextInput::make('alias')
+                                ->label('Nama Alias')
+                                ->placeholder('Contoh: PT. MJ'),
 
-                                            TextInput::make('tax_id')
-                                                ->label('NPWP (Tax ID)')
-                                                ->mask('99.999.999.9-999.999')
-                                                ->prefixIcon('heroicon-m-credit-card'),
-                                        ]),
-                                    ]),
+                            Select::make('customer_group_id')
+                                ->label('Grup Pelanggan')
+                                ->relationship('customerGroup', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->prefixIcon('heroicon-m-user-group'),
 
-                                ComponentsSection::make('Komunikasi & Alamat')
-                                    ->schema([
-                                        ComponentsGrid::make(2)->schema([
-                                            TextInput::make('email')
-                                                ->email()
-                                                ->label('Email Official')
-                                                ->prefixIcon('heroicon-m-envelope'),
-
-                                            TextInput::make('phone')
-                                                ->tel()
-                                                ->label('Nomor Telepon')
-                                                ->prefixIcon('heroicon-m-phone'),
-                                        ]),
-
-                                        ComponentsGrid::make(2)->schema([
-                                            Textarea::make('head_office_address')
-                                                ->label('Alamat Kantor Pusat')
-                                                ->rows(3)
-                                                ->placeholder('Jl. Contoh No. 123...'),
-
-                                            Textarea::make('tax_address')
-                                                ->label('Alamat Faktur Pajak')
-                                                ->rows(3)
-                                                ->placeholder('Kosongkan jika sama dengan kantor pusat'),
-                                        ]),
-                                    ]),
-                            ]),
-
-                        // TAB 2: KEBIJAKAN BISNIS
-                        TabsTab::make('Kebijakan Operasional')
-                            ->icon('heroicon-m-cog-6-tooth')
-                            ->schema([
-                                ComponentsSection::make('Parameter Transaksi')
-                                    ->description('Atur term of payment dan status perpajakan.')
-                                    ->schema([
-                                        ComponentsGrid::make(2)->schema([
-                                            TextInput::make('term_of_payment')
-                                                ->label('Term of Payment')
-                                                ->numeric()
-                                                ->suffix('Durasi')
-                                                ->prefixIcon('heroicon-m-calendar-days'),
-
-                                            Select::make('top_unit')
-                                                ->label('Satuan Waktu')
-                                                ->options([
-                                                    'day' => 'Hari',
-                                                    'week' => 'Minggu',
-                                                    'month' => 'Bulan',
-                                                ])
-                                                ->native(false),
-                                        ]),
-                                    ]),
-
-                                ComponentsSection::make('Status & Harga')
-                                    ->schema([
-                                        ComponentsGrid::make(3)->schema([
-                                            Toggle::make('use_custom_price')
-                                                ->label('Harga Khusus')
-                                                ->helperText('Gunakan price list unik')
-                                                ->inline(false),
-
-                                            Toggle::make('is_taxable')
-                                                ->label('Kena PPN')
-                                                ->default(true)
-                                                ->inline(false),
-
-                                            Toggle::make('is_active')
-                                                ->label('Status Aktif')
-                                                ->default(true)
-                                                ->inline(false),
-                                        ]),
-                                    ]),
-                            ]),
+                            TextInput::make('tax_id')
+                                ->label('NPWP (Tax ID)')
+                                ->mask('99.999.999.9-999.999')
+                                ->prefixIcon('heroicon-m-credit-card'),
+                        ]),
                     ])
-                    ->columnSpanFull()
-                    ->persistTabInQueryString(), // Bagus agar saat refresh tab tidak balik ke awal
+                    ->columnSpanFull(),
+
+                // SECTION 2: KOMUNIKASI & ALAMAT
+                ComponentsSection::make('Komunikasi & Alamat')
+                    ->icon('heroicon-m-map-pin')
+                    ->collapsible()
+                    ->schema([
+                        ComponentsGrid::make(2)->schema([
+                            TextInput::make('email')
+                                ->email()
+                                ->label('Email Official')
+                                ->prefixIcon('heroicon-m-envelope'),
+
+                            TextInput::make('phone')
+                                ->tel()
+                                ->label('Nomor Telepon')
+                                ->prefixIcon('heroicon-m-phone'),
+
+                            TextInput::make('head_office_address')
+                                ->label('Alamat Kantor')
+                                ->columnSpanFull(),
+
+                        ]),
+                    ])
+                    ->columnSpanFull(),
+
+                // SECTION 3: TABLE CUSTOMER BRANDS (REPEATER CUSTOM VIEW)
+                ComponentsSection::make('Daftar Brand per Cabang')
+                    ->schema([
+                        ViewField::make('brands')
+                            ->view('filament.components.brand-table-repeater')
+                            ->dehydrated(false) // Mencegah Filament mencoba simpan ke kolom 'brands' di DB
+                            ->afterStateHydrated(function ($set, $record) {
+                                if ($record) {
+                                    // Ambil data dari relasi brand dan masukkan ke state view
+                                    $set('brands', $record->brands()->get(['id', 'brand_name', 'nama_cabang', 'kota_cabang'])->toArray());
+                                }
+                            })
+                    ])
+                    ->columnSpanFull(),
+
+                ComponentsSection::make('Harga Khusus Produk')
+                    ->description('Atur harga spesial produk untuk customer ini.')
+                    ->schema([
+                        // Update bagian ViewField product_prices
+                        ViewField::make('product_prices')
+                            ->view('filament.components.product-price-table')
+                            ->dehydrated(false)
+                            ->afterStateHydrated(function ($set, $record) {
+                                if ($record) {
+                                    $set('product_prices', $record->productPrices()
+                                        ->with(['product.unit']) // Load relasi product dan unitnya
+                                        ->get()
+                                        ->map(fn($item) => [
+                                            'id' => $item->id,
+                                            'product_id' => $item->product_id,
+                                            // Gabungkan Nama - Unit untuk ditampilkan di tabel
+                                            'product_display_name' => $item->product?->name . ' - ' . ($item->product?->unit?->name ?? '-'),
+                                            'special_price' => $item->special_price,
+                                        ])->toArray());
+                                }
+                            }),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 }

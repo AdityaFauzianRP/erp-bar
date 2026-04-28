@@ -21,6 +21,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class ErpPanelProvider extends PanelProvider
@@ -32,13 +33,43 @@ class ErpPanelProvider extends PanelProvider
             ->id('erp')
             ->path('erp')
             ->login()
+            ->brandName('Core System MBG')
             ->colors([
                 'primary' => Color::Amber,
             ])
+
+            ->spa()
+            ->sidebarCollapsibleOnDesktop()
+            ->renderHook(
+                'panels::head.end',
+                fn(): string => new HtmlString('
+                    <style>
+                        /* HANYA BERLAKU DI LIGHT MODE */
+                        html:not(.dark) .fi-sidebar { 
+                            background-color: white !important; 
+                            box-shadow: 2px 0 10px rgba(0,0,0,0.05) !important; 
+                            border-right: none !important; 
+                        }
+                        html:not(.dark) .fi-sidebar-header { 
+                            background-color: white !important; 
+                            border-bottom: 1px solid #f3f4f6; 
+                        }
+                        html:not(.dark) .fi-sidebar-nav { 
+                            background-color: white !important; 
+                        }
+
+                        /* OPSIONAL: PERHALUS TAMPILAN DI DARK MODE */
+                        html.dark .fi-sidebar {
+                            box-shadow: 2px 0 10px rgba(0,0,0,0.3) !important;
+                            border-right: 1px solid rgba(255,255,255,0.05) !important;
+                        }
+                    </style>
+                ')
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
-                Dashboard::class,
+                // Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
@@ -68,7 +99,7 @@ class ErpPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            
+
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label('Profil Saya')

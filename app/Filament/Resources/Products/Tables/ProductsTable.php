@@ -52,29 +52,29 @@ class ProductsTable
                     ->color('danger'), // Warna merah untuk pengeluaran
 
                 // HARGA JUAL
-                TextColumn::make('harga_jual_default')
-                    ->label('Harga Jual')
-                    ->money('idr')
-                    ->sortable()
-                    ->weight(FontWeight::Bold)
-                    ->color('success'), // Warna hijau untuk pemasukan
+                    // TextColumn::make('harga_jual_default')
+                    //     ->label('Harga Jual')
+                    //     ->money('idr')
+                    //     ->sortable()
+                    //     ->weight(FontWeight::Bold)
+                    //     ->color('success'), // Warna hijau untuk pemasukan
 
-                // MONITORING PROFIT (Kalkulasi Otomatis)
-                TextColumn::make('profit')
-                    ->label('Margin (Rp)')
-                    ->state(fn($record) => $record->harga_jual_default - $record->hpp)
-                    ->money('idr')
-                    ->color('info'),
+                    // // MONITORING PROFIT (Kalkulasi Otomatis)
+                    // TextColumn::make('profit')
+                    //     ->label('Margin (Rp)')
+                    //     ->state(fn($record) => $record->harga_jual_default - $record->hpp)
+                    //     ->money('idr')
+                    //     ->color('info'),
 
-                TextColumn::make('margin_pct')
-                    ->label('Margin (%)')
-                    ->state(function ($record) {
-                        if ($record->harga_jual_default <= 0) return '0%';
-                        $margin = (($record->harga_jual_default - $record->hpp) / $record->harga_jual_default) * 100;
-                        return number_format($margin, 1) . '%';
-                    })
-                    ->badge()
-                    ->color(fn($state) => (float) $state > 20 ? 'success' : 'warning'),
+                    // TextColumn::make('margin_pct')
+                    //     ->label('Margin (%)')
+                    //     ->state(function ($record) {
+                    //         if ($record->harga_jual_default <= 0) return '0%';
+                    //         $margin = (($record->harga_jual_default - $record->hpp) / $record->harga_jual_default) * 100;
+                    //         return number_format($margin, 1) . '%';
+                    //     })
+                    //     ->badge()
+                    //     ->color(fn($state) => (float) $state > 20 ? 'success' : 'warning'),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
@@ -83,11 +83,11 @@ class ProductsTable
             ->actions([
                 EditAction::make(),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ])
+            // ->bulkActions([
+            //     BulkActionGroup::make([
+            //         DeleteBulkAction::make(),
+            //     ]),
+            // ])
             ->emptyStateHeading('Belum ada produk')
             ->emptyStateDescription('Mulai tambahkan produk pertama Anda untuk mengelola harga.');
     }

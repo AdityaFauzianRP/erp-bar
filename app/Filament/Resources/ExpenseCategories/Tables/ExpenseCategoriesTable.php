@@ -55,13 +55,13 @@ class ExpenseCategoriesTable
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
+                // DeleteAction::make(),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ])
+            // ->bulkActions([
+            //     BulkActionGroup::make([
+            //         DeleteBulkAction::make(),
+            //     ]),
+            // ])
             ->emptyStateIcon('heroicon-o-tag')
             ->emptyStateHeading('Belum ada kategori pengeluaran')
             ->emptyStateDescription('Buat kategori pertama Anda untuk mulai mencatat pengeluaran.');

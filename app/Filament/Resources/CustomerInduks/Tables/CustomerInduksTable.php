@@ -18,24 +18,73 @@ class CustomerInduksTable
     {
         return $table
             ->columns([
+                // KODE DENGAN ICON TAG
                 TextColumn::make('code')
                     ->label('Kode')
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->fontFamily('mono'),
+                    ->fontFamily('mono')
+                    ->icon('heroicon-m-hashtag')
+                    ->iconColor('gray')
+                    ->color('primary'),
 
+                // NAMA PERUSAHAAN DENGAN AVATAR INISIAL (Visual Branding)
                 TextColumn::make('name')
                     ->label('Nama Perusahaan')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold')
-                    ->description(fn($record) => $record->alias),
+                    ->weight('Bold')
+                    ->size('Large')
+                    ->description(fn($record) => $record->alias ?? '---')
+                    ->icon('heroicon-m-building-office-2')
+                    ->iconColor('primary'),
 
+                // KONTAK DENGAN ICON INTERAKTIF
                 TextColumn::make('email')
-                    ->label('Kontak')
-                    ->description(fn($record) => $record->phone),
+                    ->label('Kontak & Alamat')
+                    ->icon('heroicon-m-envelope')
+                    ->description(fn($record) => "📞 " . ($record->phone ?? '-'))
+                    ->color('gray')
+                    ->searchable(),
 
+                // INFORMASI PEMBAYARAN (TOP) - Menjawab issue error sebelumnya
+                TextColumn::make('term_of_payment')
+                    ->label('Termin')
+                    ->suffix(function ($record) {
+                        $unit = strtolower($record->top_unit ?? 'day');
+
+                        $mapping = [
+                            'day'   => ' Hari',
+                            'days'  => ' Hari',
+                            'month' => ' Bulan',
+                            'months' => ' Bulan',
+                            'year'  => ' Tahun',
+                            'years' => ' Tahun',
+                        ];
+
+                        return $mapping[$unit] ?? ' Hari';
+                    })
+                    ->icon('heroicon-m-credit-card')
+                    ->badge()
+                    ->color('warning'),
+
+                // STATUS AKTIF DENGAN ICON BERWARNA
+                IconColumn::make('is_active')
+                    ->label('Status')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+
+                // // CUSTOM PRICE INDICATOR
+                // IconColumn::make('use_custom_price')
+                //     ->label('Custom Price')
+                //     ->boolean()
+                //     ->trueIcon('heroicon-m-currency-dollar')
+                //     ->falseIcon('heroicon-m-minus-small')
+                //     ->color('info'),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')->label('Status Aktif'),
@@ -43,7 +92,7 @@ class CustomerInduksTable
             ])
             ->actions([
                 ActionsEditAction::make(),
-                ActionsDeleteAction::make(),
+                // ActionsDeleteAction::make(),
             ]);
     }
 }

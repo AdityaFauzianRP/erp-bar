@@ -37,34 +37,4 @@ class WarehousePolicy
         return $authUser->can('Delete:Warehouse');
     }
 
-    public function restore(AuthUser $authUser, Warehouse $warehouse): bool
-    {
-        return $authUser->can('Restore:Warehouse');
-    }
-
-    public function forceDelete(AuthUser $authUser, Warehouse $warehouse): bool
-    {
-        return $authUser->can('ForceDelete:Warehouse');
-    }
-
-    public function forceDeleteAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('ForceDeleteAny:Warehouse');
-    }
-
-    public function restoreAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('RestoreAny:Warehouse');
-    }
-
-    public function replicate(AuthUser $authUser, Warehouse $warehouse): bool
-    {
-        return $authUser->can('Replicate:Warehouse');
-    }
-
-    public function reorder(AuthUser $authUser): bool
-    {
-        return $authUser->can('Reorder:Warehouse');
-    }
-
 }

@@ -2,15 +2,18 @@
 
 namespace App\Filament\Resources\Suppliers\Tables;
 
+use Filament\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteAction as ActionsDeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\EditAction as ActionsEditAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ActionGroup;
 
 class SuppliersTable
 {
@@ -18,65 +21,95 @@ class SuppliersTable
     {
         return $table
             ->columns([
-                // KODE SUPPLIER
+                // KODE & STATUS (Badge Style)
                 TextColumn::make('code')
-                    ->label('Kode')
+                    ->label('ID & Status Produk')
                     ->fontFamily('mono')
-                    ->sortable()
-                    ->searchable()
-                    ->color('gray'),
-
-                // NAMA SUPPLIER & PIC
-                TextColumn::make('name')
-                    ->label('Supplier')
                     ->weight(FontWeight::Bold)
+                    ->color('primary')
+                    ->searchable()
+                    ->description(fn($record) => $record->is_active ? '✅ Active Partner' : '❌ Inactive'),
+
+                // NAMA SUPPLIER DENGAN AVATAR TEKS
+                TextColumn::make('name')
+                    ->label('Nama Supplier')
+                    ->weight(FontWeight::ExtraBold)
+                    ->size('Large')
                     ->searchable()
                     ->sortable()
-                    ->description(fn ($record) => "PIC: " . ($record->pic ?? '-')),
+                    ->icon('heroicon-m-building-office-2')
+                    ->iconColor('primary')
+                    ->description(fn($record) => "PIC Master: " . ($record->pic ?? 'N/A')),
 
-                // KONTAK (Bisa diklik untuk telpon/WA)
+                // KONTAK DENGAN BADGE & ACTION
                 TextColumn::make('phone')
-                    ->label('Kontak')
+                    ->label('Kontak Utama')
                     ->icon('heroicon-m-phone')
+                    ->badge()
+                    ->color('info')
                     ->copyable()
+                    ->copyMessage('Phone number copied')
                     ->searchable(),
 
-                // INFORMASI BANK
+                // INFORMASI BANK (Box Style look)
                 TextColumn::make('bank_name')
-                    ->label('Rekening Bank')
-                    ->description(fn ($record) => $record->bank_account_number ?? 'Belum diatur')
-                    ->placeholder('-'),
+                    ->label('Data Bank')
+                    ->weight(FontWeight::Bold)
+                    ->icon('heroicon-m-credit-card')
+                    ->iconColor('success')
+                    ->color('success')
+                    ->description(fn($record) => "No: " . ($record->bank_account_number ?? 'Not Set'))
+                    ->placeholder('Bank Data Empty'),
 
-                // STATUS AKTIF
-                IconColumn::make('is_active')
-                    ->label('Status')
-                    ->boolean()
-                    ->alignCenter(),
+                // JUMLAH PRODUK (Menambah keramaian data)
+                TextColumn::make('product_suppliers_count')
+                    ->label('Produk Terdaftar')
+                    ->counts('product_suppliers') // Pastikan relasi ini ada di model
+                    ->suffix(' Items')
+                    ->badge()
+                    ->color('warning')
+                    ->sortable(),
 
-                // WAKTU TERDAFTAR
+                // WAKTU DENGAN RELATIVE TIME
                 TextColumn::make('created_at')
-                    ->label('Terdaftar')
+                    ->label('Bergabung Sejak')
                     ->dateTime('d M Y')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->description(fn($record) => $record->created_at->diffForHumans())
+                    ->color('gray')
+                    ->sortable(),
+            ])
+            ->contentGrid([
+                'md' => 1,
+                'xl' => 1, // Tetap list, tapi kita buat padat
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Status Aktif')
-                    ->boolean()
-                    ->trueLabel('Hanya Supplier Aktif')
-                    ->falseLabel('Hanya Supplier Non-Aktif'),
+                    ->label('Partnership Status')
+                    ->placeholder('All Status')
+                    ->trueLabel('Active Partners')
+                    ->falseLabel('Inactive/History')
+                    // Gunakan ini sebagai pengganti icons()
+                    // ->trueIcon('heroicon-m-check-badge')
+                    // ->falseIcon('heroicon-m-x-circle')
+                    ->native(false),
             ])
             ->actions([
-                EditAction::make()->iconButton(),
-                DeleteAction::make()->iconButton(),
+                // Action Group agar terlihat rapi (titik tiga)
+                ActionsActionGroup::make([
+                    ActionsEditAction::make()->color('primary'),
+                    ActionsDeleteAction::make(),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->button()
+                    ->label('Actions')
+                    ->color('gray'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateIcon('heroicon-o-truck')
-            ->emptyStateHeading('Belum ada data supplier')
-            ->emptyStateDescription('Mulai tambahkan supplier untuk mengelola katalog produk dan pembelian.');
+            ->striped() // Membuat baris selang-seling warna
+            ->poll('60s'); // Membuat tabel terkesan "live"
     }
 }

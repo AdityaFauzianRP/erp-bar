@@ -37,34 +37,4 @@ class CustomerIndukPolicy
         return $authUser->can('Delete:CustomerInduk');
     }
 
-    public function restore(AuthUser $authUser, CustomerInduk $customerInduk): bool
-    {
-        return $authUser->can('Restore:CustomerInduk');
-    }
-
-    public function forceDelete(AuthUser $authUser, CustomerInduk $customerInduk): bool
-    {
-        return $authUser->can('ForceDelete:CustomerInduk');
-    }
-
-    public function forceDeleteAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('ForceDeleteAny:CustomerInduk');
-    }
-
-    public function restoreAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('RestoreAny:CustomerInduk');
-    }
-
-    public function replicate(AuthUser $authUser, CustomerInduk $customerInduk): bool
-    {
-        return $authUser->can('Replicate:CustomerInduk');
-    }
-
-    public function reorder(AuthUser $authUser): bool
-    {
-        return $authUser->can('Reorder:CustomerInduk');
-    }
-
 }

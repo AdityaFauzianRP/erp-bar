@@ -27,4 +27,20 @@ class CustomerInduk extends Model
     {
         return $this->hasMany(CustomerPrice::class, 'customer_induk_id');
     }
+
+    public function customerGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        // Nama fungsi 'customerGroup' harus sama dengan yang ada di ->relationship()
+        return $this->belongsTo(CustomerGroup::class, 'customer_group_id');
+    }
+
+    public function brands(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\CustomerBrand::class, 'customer_induk_id');
+    }
+
+    public function productPrices()
+    {
+        return $this->hasMany(CustomerProductPrice::class);
+    }
 }

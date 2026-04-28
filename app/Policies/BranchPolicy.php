@@ -37,34 +37,4 @@ class BranchPolicy
         return $authUser->can('Delete:Branch');
     }
 
-    public function restore(AuthUser $authUser, Branch $branch): bool
-    {
-        return $authUser->can('Restore:Branch');
-    }
-
-    public function forceDelete(AuthUser $authUser, Branch $branch): bool
-    {
-        return $authUser->can('ForceDelete:Branch');
-    }
-
-    public function forceDeleteAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('ForceDeleteAny:Branch');
-    }
-
-    public function restoreAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('RestoreAny:Branch');
-    }
-
-    public function replicate(AuthUser $authUser, Branch $branch): bool
-    {
-        return $authUser->can('Replicate:Branch');
-    }
-
-    public function reorder(AuthUser $authUser): bool
-    {
-        return $authUser->can('Reorder:Branch');
-    }
-
 }

@@ -47,4 +47,11 @@ class Supplier extends Model
             ])
             ->withTimestamps();
     }
+
+    public function product_suppliers()
+    {
+        return $this->hasMany(\App\Models\ProductSupplier::class);
+    }
+
+
 }

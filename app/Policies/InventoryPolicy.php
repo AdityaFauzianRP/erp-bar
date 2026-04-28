@@ -37,34 +37,4 @@ class InventoryPolicy
         return $authUser->can('Delete:Inventory');
     }
 
-    public function restore(AuthUser $authUser, Inventory $inventory): bool
-    {
-        return $authUser->can('Restore:Inventory');
-    }
-
-    public function forceDelete(AuthUser $authUser, Inventory $inventory): bool
-    {
-        return $authUser->can('ForceDelete:Inventory');
-    }
-
-    public function forceDeleteAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('ForceDeleteAny:Inventory');
-    }
-
-    public function restoreAny(AuthUser $authUser): bool
-    {
-        return $authUser->can('RestoreAny:Inventory');
-    }
-
-    public function replicate(AuthUser $authUser, Inventory $inventory): bool
-    {
-        return $authUser->can('Replicate:Inventory');
-    }
-
-    public function reorder(AuthUser $authUser): bool
-    {
-        return $authUser->can('Reorder:Inventory');
-    }
-
 }

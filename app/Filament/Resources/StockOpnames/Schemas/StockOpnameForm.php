@@ -2,125 +2,199 @@
 
 namespace App\Filament\Resources\StockOpnames\Schemas;
 
-use App\Models\Inventory; // Tambahkan ini
-use Filament\Forms;        // Tambahkan ini
+use App\Models\Inventory;
+use App\Models\Product;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;   // Filament v3 menggunakan Form, bukan Schema
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\ViewField;
+use Filament\Forms\Set;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section as ComponentsSection;
+use Filament\Schemas\Components\Utilities\Set as UtilitiesSet;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
-use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\Facades\Auth;
 
 class StockOpnameForm
 {
-    public static function configure(Schema $form): Schema // Ubah Schema jadi Form
+    public static function configure(Schema $form): Schema
     {
         return $form
-            ->schema([ // Method utamanya adalah schema
-                Section::make('Informasi Utama')
+            ->schema([
+                ComponentsSection::make('Informasi Utama')
+                    ->description('Detail identitas dokumen, lokasi gudang, dan tanggal pelaksanaan opname.')
+                    ->icon('heroicon-s-clipboard-document-check') // Icon solid untuk kesan profesional
+                    ->iconColor('primary')
                     ->schema([
-                        TextInput::make('opname_number')
-                            ->label('Nomor Dokumen')
-                            ->default(fn() => 'SO-' . date('Ymd') . '-' . strtoupper(str()->random(4)))
-                            ->readOnly() // Gunakan readOnly() untuk konsistensi
-                            ->required(),
+                        Grid::make(3)->schema([
+                            TextInput::make('opname_number')
+                                ->label('Nomor Dokumen')
+                                ->readOnly()
+                                ->prefixIcon('heroicon-m-hashtag')
+                                ->prefixIconColor('primary')
+                                // Aksen teks biru tebal agar nomor dokumen menonjol
+                                ->extraInputAttributes(['class' => 'font-bold text-primary-600 bg-blue-50/50 rounded-xl'])
+                                ->default(function () {
+                                    $now = now();
+                                    $prefix = "PJ"; // Dipersingkat agar tidak terlalu panjang di UI
+                                    $year = $now->format('Y');
+                                    $month = $now->format('m');
+                                    $day = $now->format('d');
 
-                        Select::make('warehouse_id')
-                            ->label('Gudang')
-                            ->relationship('warehouse', 'name')
-                            ->required()
-                            ->live(), // Di v3, live() lebih disarankan daripada reactive()
+                                    $lastRecord = \App\Models\StockOpname::whereYear('created_at', $year)
+                                        ->whereMonth('created_at', $month)
+                                        ->latest('id')
+                                        ->first();
 
-                        DatePicker::make('date')
-                            ->label('Tanggal Opname')
-                            ->default(now())
-                            ->required(),
+                                    if ($lastRecord && $lastRecord->opname_number) {
+                                        $lastCounter = (int) substr($lastRecord->opname_number, -4);
+                                        $newCounter = $lastCounter + 1;
+                                    } else {
+                                        $newCounter = 1;
+                                    }
 
-                        Hidden::make('user_id')
-                            ->default(Auth::id()),
-                    ])->columns(3)
-                    ->columnSpanFull(),
+                                    return sprintf(
+                                        "%s/%s/%s/%s/%s",
+                                        $prefix,
+                                        $year,
+                                        $month,
+                                        $day,
+                                        str_pad($newCounter, 4, '0', STR_PAD_LEFT)
+                                    );
+                                }),
 
-                Section::make('Item Barang')
+                            Select::make('warehouse_id')
+                                ->label('Lokasi Gudang')
+                                ->relationship('warehouse', 'name')
+                                ->prefixIcon('heroicon-m-home-modern')
+                                ->prefixIconColor('primary')
+                                ->searchable()
+                                ->preload()
+                                ->required()
+                                ->live()
+                                ->disabled(fn($record) => $record && $record->status === 'completed')
+                                ->afterStateUpdated(function ($set, $state, $operation) {
+                                    if ($operation !== 'create' || !$state) return;
+
+                                    $inventoryData = \App\Models\Inventory::where('warehouse_id', $state)
+                                        ->with('product')
+                                        ->get()
+                                        ->mapWithKeys(function ($inv) {
+                                            $key = (string) $inv->product_id;
+                                            return [$key => [
+                                                'product_id' => $inv->product_id,
+                                                'product_name' => $inv->product?->name ?? 'Produk Tidak Dikenal',
+                                                'system_stock' => (float) $inv->stock,
+                                                'physical_stock' => (float) $inv->stock,
+                                                'difference' => 0,
+                                            ]];
+                                        })
+                                        ->toArray();
+
+                                    $set('items', $inventoryData);
+                                }),
+
+                            DatePicker::make('date')
+                                ->label('Tanggal Pelaksanaan')
+                                ->prefixIcon('heroicon-m-calendar-days')
+                                ->prefixIconColor('primary')
+                                ->default(now())
+                                ->required()
+                                ->disabled(fn($record) => $record && $record->status === 'completed'),
+
+                            Hidden::make('user_id')
+                                ->default(auth()->id()),
+                        ]),
+                    ])
+                    ->columnSpanFull()
+                    ->collapsible(), // Bisa di-collapse agar hemat ruang jika data item banyak
+
+                ComponentsSection::make('Item Barang')
                     ->schema([
-                        Repeater::make('items')
-                            ->relationship()
-                            ->schema([
-                                Select::make('branch_id')
-                                    ->label('Pemilik (PT)')
-                                    ->relationship('branch', 'name')
-                                    ->required()
-                                    ->live(),
-
-                                // Tambahkan di dalam repeater items
-                                // Di dalam file StockOpnameForm.php
-
-                                Select::make('product_id')
-                                    ->label('Produk')
-                                    ->relationship('product', 'name')
-                                    /** * Trik Utama: Menggabungkan Nama Produk dan Nama Unit di Dropdown
-                                     * Kita panggil relasi unit untuk mengambil kolom 'name' dari tabel units
-                                     */
-                                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name} - {$record->unit?->name}")
-                                    ->searchable()
-                                    ->preload() // Memuat data lebih cepat saat diklik
-                                    ->required()
-                                    ->live()
-                                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                                        // 1. Ambil data produk beserta unitnya (Eager Load)
-                                        $product = \App\Models\Product::with('unit')->find($state);
-
-                                        // 2. Set Nama Unit ke field 'unit_name'
-                                        $unitName = $product?->unit?->name ?? '-';
-                                        $set('unit_name', $unitName);
-
-                                        // 3. Ambil stok sistem dari tabel Inventory
-                                        $warehouseId = $get('../../warehouse_id');
-                                        $branchId = $get('branch_id');
-
-                                        if ($state && $warehouseId && $branchId) {
-                                            $inv = \App\Models\Inventory::where([
-                                                'warehouse_id' => $warehouseId,
-                                                'product_id' => $state,
-                                                'branch_id' => $branchId
-                                            ])->first();
-
-                                            $set('system_stock', $inv ? $inv->stock : 0);
-
-                                            // 4. Hitung ulang selisih
-                                            $physical = (float)($get('physical_stock') ?? 0);
-                                            $system = $inv ? (float)$inv->stock : 0;
-                                            $set('difference', $physical - $system);
-                                        }
-                                    }),
-
-                                
-                                TextInput::make('system_stock')
-                                    ->label('Stok Sistem')
-                                    ->numeric()
-                                    ->readOnly()
-                                    ->default(0),
-
-                                TextInput::make('physical_stock')
-                                    ->label('Stok Fisik')
-                                    ->numeric()
-                                    ->required()
-                                    ->live(onBlur: true) // Hitung selisih setelah user selesai ngetik
-                                    ->afterStateUpdated(fn($state, Set $set, Get $get)
-                                    => $set('difference', (float)$state - (float)$get('system_stock'))),
-                                
+                        ViewField::make('items')
+                            ->view('filament.forms.components.stock-opname-repeater')
+                            ->columnSpanFull()
+                            ->dehydrated(true)
+                            ->extraAttributes(fn($record) => [
+                                'is_disabled' => $record && $record->status === 'completed'
                             ])
-                            ->columns(4)
-                            ->defaultItems(1)
-                            ->columnSpanFull(),
+                            ->formatStateUsing(function ($state, $record) {
+                                // Jika $state kosong, coba ambil dari relasi record (Mode Edit)
+                                $dataItems = $state;
+                                if (empty($dataItems) && $record && $record->items) {
+                                    $dataItems = $record->items;
+                                }
 
+                                if (empty($dataItems)) return [];
+
+                                $items = is_array($dataItems) ? $dataItems : $dataItems->toArray();
+                                $formatted = [];
+
+                                foreach ($items as $item) {
+                                    $productId = $item['product_id'];
+
+                                    // CARI PRODUCT BESERTA UNITNYA
+                                    $product = Product::with('unit')->find($productId);
+
+                                    $productName = $item['product']['name'] ?? ($item['product_name'] ?? $product?->name ?? 'Unknown');
+                                    $unitName = $product?->unit?->name ?? '-'; // Ambil dari relasi
+
+                                    $key = (string) $productId;
+                                    $formatted[$key] = [
+                                        'product_id' => $productId,
+                                        'product_name' => $productName,
+                                        'unit_name' => $unitName, // Sekarang variabel $unitName sudah ada isinya
+                                        'system_stock' => (float) ($item['system_stock'] ?? 0),
+                                        'physical_stock' => (float) ($item['physical_stock'] ?? 0),
+                                        'difference' => (float) ($item['difference'] ?? 0),
+                                        'waster_qty' => (float) ($item['waster_qty'] ?? 0),
+                                        'waster_price' => (float) ($item['waster_price'] ?? 0),
+                                        'waster_total_price' => (float) ($item['waster_total_price'] ?? 0),
+                                    ];
+                                }
+                                return $formatted;
+                                return $formatted;
+                            })
+                            ->live(),
                     ])
                     ->columnSpanFull(),
+
+                // ->schema([
+                //     ViewField::make('items')
+                //         ->view('filament.forms.components.stock-opname-repeater')
+                //         ->afterStateHydrated(function ($component, $state, $record) {
+                //             $dataItems = $state;
+                //             if ($record && empty($state)) {
+                //                 $dataItems = $record->items;
+                //             }
+
+                //             if (empty($dataItems)) return [];
+
+                //             $items = is_array($dataItems) ? $dataItems : $dataItems->toArray();
+                //             $formatted = [];
+
+                //             foreach ($items as $item) {
+                //                 $productId = $item['product_id'];
+                //                 $productName = $item['product']['name'] ?? ($item['product_name'] ?? Product::find($productId)?->name ?? 'Unknown');
+
+                //                 $key = (string) $productId;
+                //                 $formatted[$key] = [
+                //                     'product_id' => $productId,
+                //                     'product_name' => $productName,
+                //                     'system_stock' => (float) ($item['system_stock'] ?? 0),
+                //                     'physical_stock' => (float) ($item['physical_stock'] ?? 0),
+                //                     'difference' => (float) ($item['difference'] ?? 0),
+                //                     // TAMBAHKAN 3 FIELD BARU INI
+
+                //                 ];
+                //             }
+                //             return $formatted;
+                //         })
+                //         ->live(),
+                // ])
+                // ->columnSpanFull(),
             ]);
     }
 }

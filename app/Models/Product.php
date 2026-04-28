@@ -14,7 +14,6 @@ class Product extends Model
         'code',
         'name',
         'hpp',
-        'harga_jual_default',
         'is_active'
     ];
 
@@ -62,5 +61,11 @@ class Product extends Model
     public function inventories(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Inventory::class);
+    }
+
+    public function product_suppliers()
+    {
+        // Gunakan HasMany ke tabel pivot/tabel product_supplier
+        return $this->hasMany(ProductSupplier::class);
     }
 }

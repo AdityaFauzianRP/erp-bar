@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup as ActionsBulkActionGroup;
 use Filament\Actions\DetachAction as ActionsDetachAction;
 use Filament\Actions\DetachBulkAction as ActionsDetachBulkAction;
 use Filament\Actions\EditAction as ActionsEditAction;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -39,14 +40,14 @@ class ProductsRelationManager extends RelationManager
                     ->label('SKU Supplier')
                     ->placeholder('Kode unik barang di supplier ini'),
 
-                Select::make('branch_id')
-                    ->label('Berlaku di Cabang')
-                    ->options(
-                        fn($livewire) =>
-                        $livewire->getOwnerRecord()->branches->pluck('name', 'id')
-                    )
-                    ->native(false)
-                    ->required(),
+                // Select::make('branch_id')
+                //     ->label('Berlaku di Cabang')
+                //     ->options(
+                //         fn($livewire) =>
+                //         $livewire->getOwnerRecord()->branches->pluck('name', 'id')
+                //     )
+                //     ->native(false)
+                //     ->required(),
 
                 TextInput::make('harga_beli_khusus')
                     ->label('Harga Kontrak Beli')
@@ -72,11 +73,11 @@ class ProductsRelationManager extends RelationManager
                     ->searchable()
                     ->description(fn($record) => "SKU Supplier: " . ($record->pivot->sku_supplier ?? '-')),
 
-                Tables\Columns\TextColumn::make('pivot.branch_id')
-                    ->label('Berlaku di Cabang')
-                    ->formatStateUsing(fn($state) => \App\Models\Branch::find($state)?->name ?? '-')
-                    ->badge()
-                    ->color('warning'),
+                // Tables\Columns\TextColumn::make('pivot.branch_id')
+                //     ->label('Berlaku di Cabang')
+                //     ->formatStateUsing(fn($state) => \App\Models\Branch::find($state)?->name ?? '-')
+                //     ->badge()
+                //     ->color('warning'),
 
                 Tables\Columns\TextColumn::make('pivot.harga_beli_khusus')
                     ->label('Harga Kontrak')
@@ -129,15 +130,8 @@ class ProductsRelationManager extends RelationManager
                             ->prefix('IDR')
                             ->required(),
 
-                        Select::make('branch_id')
-                            ->label('Berlaku di Cabang')
-                            // Tambahkan preload() juga di sini agar daftar cabang langsung muncul
-                            ->preload()
-                            ->options(
-                                fn($livewire) => $livewire->getOwnerRecord()->branches->pluck('name', 'id')
-                            )
-                            ->native(false)
-                            ->required(),
+                        Hidden::make('branch_id')
+                            ->default(1) // Otomatis terpilih ID 1
                     ]),
             ])
             ->actions([

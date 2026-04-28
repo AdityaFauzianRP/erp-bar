@@ -38,11 +38,11 @@ class InventoriesRelationManager extends RelationManager
             ->recordTitleAttribute('product.name')
             ->columns([
                 // Menampilkan Nama PT/Branch (Pemilik Barang)
-                TextColumn::make('branch.name')
-                    ->label('Pemilik (PT)')
-                    ->badge()
-                    ->color('info')
-                    ->sortable(),
+                // TextColumn::make('branch.name')
+                //     ->label('Pemilik (PT)')
+                //     ->badge()
+                //     ->color('info')
+                //     ->sortable(),
 
                 // Menampilkan Detail Produk
                 TextColumn::make('product.code')

@@ -2,17 +2,12 @@
 
 namespace App\Filament\Resources\Suppliers\Schemas;
 
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Grid as ComponentsGrid;
 use Filament\Schemas\Components\Section as ComponentsSection;
-use Filament\Schemas\Components\Tabs as ComponentsTabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 
 class SupplierForm
@@ -21,90 +16,102 @@ class SupplierForm
     {
         return $schema
             ->schema([
-                ComponentsTabs::make('Supplier Details')
-                    ->tabs([
-                        // TAB 1: PROFIL & KONTAK
-                        Tab::make('Profil & Kontak')
-                            ->icon('heroicon-m-building-storefront')
-                            ->schema([
-                                ComponentsSection::make('Identitas Supplier')
-                                    ->description('Informasi dasar mengenai perusahaan penyuplai.')
-                                    ->schema([
-                                        ComponentsGrid::make(2)->schema([
-                                            TextInput::make('code')
-                                                ->label('Kode Supplier')
-                                                ->placeholder('Otomatis (SUP-xxxx)')
-                                                ->disabled()
-                                                ->prefixIcon('heroicon-m-qr-code'),
+                // BAGIAN 1: IDENTITAS SUPPLIER (BLUE ACCENT)
+                ComponentsSection::make('Identitas Supplier')
+                    ->description('Informasi dasar dan kontak perusahaan penyuplai.')
+                    ->icon('heroicon-m-building-storefront')
+                    ->iconColor('primary') // Akan mengikuti warna tema Filament (Biru)
+                    ->collapsible()
+                    ->schema([
+                        ComponentsGrid::make(3)->schema([
+                            TextInput::make('code')
+                                ->label('Kode Supplier')
+                                ->placeholder('Otomatis (SUP-xxxx)')
+                                ->disabled()
+                                ->dehydrated(false)
+                                ->prefixIcon('heroicon-m-qr-code')
+                                ->extraInputAttributes(['style' => 'background-color: #f0f9ff']), // Biru sangat muda
 
-                                            TextInput::make('name')
-                                                ->label('Nama Supplier / Perusahaan')
-                                                ->required()
-                                                ->placeholder('Contoh: PT. Informa Furnishing')
-                                                ->prefixIcon('heroicon-m-building-office'),
+                            TextInput::make('name')
+                                ->label('Nama Perusahaan')
+                                ->required()
+                                ->placeholder('Contoh: PT. Maju Jaya')
+                                ->prefixIcon('heroicon-m-building-office')
+                                ->prefixIconColor('primary')
+                                ->columnSpan(2),
 
-                                            TextInput::make('pic')
-                                                ->label('Nama PIC (Contact Person)')
-                                                ->placeholder('Nama orang yang bisa dihubungi')
-                                                ->prefixIcon('heroicon-m-user'),
+                            TextInput::make('pic')
+                                ->label('Nama PIC')
+                                ->placeholder('Nama person-in-charge')
+                                ->prefixIcon('heroicon-m-user')
+                                ->prefixIconColor('primary'),
 
-                                            TextInput::make('phone')
-                                                ->label('Nomor Telepon / WA')
-                                                ->tel()
-                                                ->placeholder('0812xxxx')
-                                                ->prefixIcon('heroicon-m-phone'),
-                                        ]),
+                            TextInput::make('phone')
+                                ->label('Nomor Telepon')
+                                ->tel()
+                                ->placeholder('0812xxxx')
+                                ->prefixIcon('heroicon-m-phone')
+                                ->prefixIconColor('primary'),
 
-                                        Textarea::make('address')
-                                            ->label('Alamat Kantor / Gudang')
-                                            ->rows(3)
-                                            ->placeholder('Jl. Nama Jalan No. 123...')
-                                            ->columnSpanFull(),
+                            Toggle::make('is_active')
+                                ->label('Status Aktif')
+                                ->default(true)
+                                ->onColor('success')
+                                ->offColor('danger')
+                                ->inline(false),
+                        ]),
 
-                                        Select::make('branches')
-                                            ->label('Cabang yang Dilayani')
-                                            ->relationship('branches', 'name') // Mengacu pada fungsi branches() di model
-                                            ->multiple() // User bisa pilih lebih dari satu cabang
-                                            ->preload()
-                                            ->searchable()
-                                            ->placeholder('Pilih cabang...')
-                                            ->helperText('Hanya cabang yang terpilih yang dapat melihat supplier ini.')
-                                            ->required(),
-                                    ]),
-                            ]),
-
-                        // TAB 2: INFORMASI KEUANGAN
-                        Tab::make('Informasi Pembayaran')
-                            ->icon('heroicon-m-credit-card')
-                            ->schema([
-                                ComponentsSection::make('Rekening Bank Supplier')
-                                    ->description('Data ini digunakan untuk keperluan pembayaran tagihan (Purchasing).')
-                                    ->schema([
-                                        ComponentsGrid::make(2)->schema([
-                                            TextInput::make('bank_name')
-                                                ->label('Nama Bank')
-                                                ->placeholder('Contoh: BCA / Mandiri / BRI')
-                                                ->prefixIcon('heroicon-m-banknotes'),
-
-                                            TextInput::make('bank_account_number')
-                                                ->label('Nomor Rekening')
-                                                ->placeholder('Masukkan angka rekening')
-                                                ->prefixIcon('heroicon-m-credit-card'),
-                                        ]),
-                                    ]),
-
-                                ComponentsSection::make('Pengaturan Status')
-                                    ->schema([
-                                        Toggle::make('is_active')
-                                            ->label('Status Supplier Aktif')
-                                            ->helperText('Matikan jika supplier tidak lagi bekerja sama')
-                                            ->default(true)
-                                            ->inline(false),
-                                    ]),
-                            ]),
+                        Textarea::make('address')
+                            ->label('Alamat Kantor')
+                            ->rows(2)
+                            ->placeholder('Jl. Alamat Lengkap...')
+                            ->columnSpanFull(),
                     ])
                     ->columnSpanFull()
-                    ->persistTabInQueryString(),
+                    ->extraAttributes(['class' => 'border-t-4 border-t-blue-600 shadow-sm']), // Garis atas biru tebal
+
+                // BAGIAN 2: KATALOG PRODUK (TABEL KUSTOM)
+                ComponentsSection::make('Katalog Produk')
+                    ->description('Kelola daftar harga beli khusus dari supplier ini dalam satu tabel.')
+                    ->icon('heroicon-m-shopping-bag')
+                    ->iconColor('primary')
+                    ->schema([
+                        ViewField::make('product_suppliers')
+                            ->view('filament.forms.components.supplier-catalog-table')
+                            ->columnSpanFull()
+                            ->dehydrated(true)
+                            ->afterStateHydrated(function ($component, $record) {
+                                if ($record) {
+                                    $items = $record->product_suppliers()->with('product')->get()->map(function ($item) {
+                                        return [
+                                            'product_id' => $item->product_id,
+                                            'product_name' => $item->product?->name ?? 'N/A',
+                                            'sku_supplier' => $item->sku_supplier,
+                                            'harga_beli_khusus' => $item->harga_beli_khusus,
+                                            'branch_id' => $item->branch_id,
+                                        ];
+                                    })->toArray();
+                                    $component->state($items);
+                                }
+                            })
+                            ->saveRelationshipsUsing(function ($component, $state) {
+                                $supplier = $component->getRecord();
+                                if (! $supplier) return;
+
+                                $supplier->product_suppliers()->delete();
+
+                                foreach ($state as $item) {
+                                    $supplier->product_suppliers()->create([
+                                        'product_id' => $item['product_id'],
+                                        'sku_supplier' => $item['sku_supplier'] ?? null,
+                                        'harga_beli_khusus' => $item['harga_beli_khusus'] ?? 0,
+                                        'branch_id' => 1,
+                                    ]);
+                                }
+                            }),
+                    ])
+                    ->columnSpanFull()
+                    ->extraAttributes(['class' => 'border-t-4 border-t-blue-600 shadow-sm']),
             ]);
     }
 }
