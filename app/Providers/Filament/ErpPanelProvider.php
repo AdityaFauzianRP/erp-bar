@@ -37,8 +37,30 @@ class ErpPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->navigationGroups([
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Dashboard'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Master Data')
+                    ->icon('heroicon-o-server-stack'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Inventory')
+                    ->icon('heroicon-o-cube'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Pengeluaran')
+                    ->icon('heroicon-o-shopping-bag'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Manajemen Aset')
+                    ->icon('heroicon-o-building-office-2'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Laporan')
+                    ->icon('heroicon-o-document-text'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Manajemen Pengguna')
+                    ->icon('heroicon-o-users'),
+            ])
 
-            ->spa()
+            // ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(
                 'panels::head.end',
@@ -69,7 +91,7 @@ class ErpPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
-                // Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
@@ -86,7 +108,7 @@ class ErpPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
-                AuthenticateSession::class,
+                // AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,

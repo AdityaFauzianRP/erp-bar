@@ -30,9 +30,13 @@ class StockOpnameResource extends Resource
             return null;
         }
 
-        // Mengubah query untuk menghitung kolom pending_change yang tidak NULL
-        return static::getModel()::where('status', 'Draft')
-            ->count() ?: null;
+        try {
+            // Mengubah query untuk menghitung kolom pending_change yang tidak NULL
+            return static::getModel()::where('status', 'Draft')
+                ->count() ?: null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public static function getNavigationBadgeColor(): ?string

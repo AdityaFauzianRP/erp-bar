@@ -29,7 +29,7 @@ class SupplierResource extends Resource
     protected static ?string $navigationLabel = 'Supplier';
 
     // Urutan di sidebar (Opsional)
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 17;
 
     public static function form(Schema $schema): Schema
     {

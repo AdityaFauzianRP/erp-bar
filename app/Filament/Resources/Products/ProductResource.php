@@ -22,11 +22,11 @@ class ProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart'; // Icon Keranjang
 
-    protected static ?string $navigationLabel = 'Daftar Produk';
+    protected static ?string $navigationLabel = 'Bahan Siap Masak (Menu)';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
-    protected static ?string $pluralLabel = 'Produk';
+    protected static ?string $pluralLabel = 'Bahan Siap Masak (Menu)';
 
     public static function form(Schema $schema): Schema
     {

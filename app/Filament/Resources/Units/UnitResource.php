@@ -20,11 +20,11 @@ class UnitResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-scale'; // Icon Timbangan
 
-    protected static ?string $navigationLabel = 'Satuan (Units)';
+    protected static ?string $navigationLabel = 'Satuan Bahan Baku';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
-    protected static ?string $pluralLabel = 'Satuan';
+    protected static ?string $pluralLabel = 'Satuan Bahan Baku';
 
     public static function form(Schema $schema): Schema
     {
