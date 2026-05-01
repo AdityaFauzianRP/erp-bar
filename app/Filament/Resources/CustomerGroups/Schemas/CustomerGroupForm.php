@@ -34,6 +34,11 @@ class CustomerGroupForm
                                 ->required(),
 
                         ]),
+                        TextInput::make('price_package')
+                            ->label('Paket Harga')
+                            ->numeric()
+                            ->default(0)
+                            ->prefix('Rp'),
                         Textarea::make('description')
                             ->label('Keterangan'),
 

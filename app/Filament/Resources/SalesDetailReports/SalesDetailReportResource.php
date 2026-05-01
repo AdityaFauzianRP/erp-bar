@@ -26,7 +26,7 @@ class SalesDetailReportResource extends Resource
 
     protected static ?string $navigationLabel = 'Laporan Detail Penjualan';
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $modelLabel = 'Laporan Detail Penjualan';
     protected static ?string $pluralModelLabel = 'Laporan Detail Penjualan';
 

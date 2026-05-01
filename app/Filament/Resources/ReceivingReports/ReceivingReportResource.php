@@ -22,6 +22,7 @@ class ReceivingReportResource extends Resource
     protected static string|BackedEnum|null $navigationIcon  = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationLabel = 'Penerimaan Barang';
     protected static string|\UnitEnum|null $navigationGroup = 'Pengeluaran';
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $modelLabel = 'Penerimaan Barang';
     protected static ?string $pluralModelLabel = 'Daftar Penerimaan Barang';
 

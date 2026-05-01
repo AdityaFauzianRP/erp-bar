@@ -26,6 +26,7 @@ class ExecSummaryFactResource extends Resource
 
     protected static ?string $navigationLabel = 'Ringkasan Laporan';
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $modelLabel = 'Ringkasan Laporan';
     protected static ?string $pluralModelLabel = 'Ringkasan Laporan';

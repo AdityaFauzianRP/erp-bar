@@ -19,11 +19,11 @@ class CustomerGroupResource extends Resource
     protected static ?string $model = CustomerGroup::class;
 
     protected static string|BackedEnum|null $navigationIcon  = 'heroicon-o-building-office-2';
-    protected static ?string $navigationLabel = 'Customer Group';
+    protected static ?string $navigationLabel = 'Kategori Sekolah (Paket Harga)';
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
-    protected static ?string $modelLabel = 'Data Customer';
-    protected static ?string $pluralModelLabel = 'Daftar Data Customer';
+    protected static ?string $modelLabel = 'Kategori Sekolah';
+    protected static ?string $pluralModelLabel = 'Kategori Sekolah (Paket Harga)';
 
     public static function form(Schema $schema): Schema
     {

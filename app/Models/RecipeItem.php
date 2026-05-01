@@ -14,6 +14,8 @@ class RecipeItem extends Model
         'raw_material_id',
         'quantity',
         'unit_id',
+        'hpp',
+        'kandungan_nutrisi',
     ];
 
     public function recipe()

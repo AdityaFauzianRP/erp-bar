@@ -28,6 +28,7 @@ class RealisasiItemReportResource extends Resource
     protected static ?string $navigationLabel = 'Laporan Realisasi Order';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {

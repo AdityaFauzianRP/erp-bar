@@ -24,7 +24,7 @@ class PurchaseReportResource extends Resource
 
     protected static ?string $navigationLabel = 'Laporan Pembelian';
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $modelLabel = 'Laporan Pembelian';
     protected static ?string $pluralModelLabel = 'Laporan Pembelian';
 

@@ -23,6 +23,10 @@ class CustomerGroupsTable
                 TextColumn::make('name')
                     ->label('Nama Group')
                     ->searchable(),
+                TextColumn::make('price_package')
+                    ->label('Paket Harga')
+                    ->money('IDR')
+                    ->sortable(),
                 IconColumn::make('is_active')
                     ->label('Status')
                     ->boolean(),

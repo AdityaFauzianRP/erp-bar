@@ -15,6 +15,7 @@ class CustomerGroup extends Model
         'name',
         'code',
         'description',
+        'price_package',
         'is_active'
     ];
 

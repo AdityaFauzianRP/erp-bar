@@ -31,6 +31,7 @@ class RecipeForm
                             ->required()
                             ->columnSpan(2),
                         TextInput::make('quantity')
+                            ->label('Gramasi Bahan Baku')
                             ->numeric()
                             ->required()
                             ->columnSpan(1),
@@ -38,6 +39,16 @@ class RecipeForm
                             ->relationship('unit', 'name')
                             ->required()
                             ->columnSpan(1),
+                        TextInput::make('hpp')
+                            ->label('HPP')
+                            ->numeric()
+                            ->default(0)
+                            ->prefix('Rp')
+                            ->columnSpan(2),
+                        TextInput::make('kandungan_nutrisi')
+                            ->label('Kandungan Nutrisi')
+                            ->maxLength(255)
+                            ->columnSpan(2),
                     ])
                     ->columns(4)
                     ->columnSpanFull(),

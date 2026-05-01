@@ -31,12 +31,11 @@ class ReceivingReport extends Model
         return $this->belongsTo(Purchase::class);
     }
 
-    public function user() // Kita beri nama 'user' agar sesuai dengan Resource
+    public function user()
     {
         return $this->belongsTo(\App\Models\User::class, 'received_by');
     }
 
-    // Atau jika kamu mau tetap menggunakan nama 'receivedBy'
     public function receivedBy()
     {
         return $this->belongsTo(\App\Models\User::class, 'received_by');
@@ -45,11 +44,9 @@ class ReceivingReport extends Model
     protected static function booted()
     {
         static::created(function ($receivingReport) {
-            // Ambil data Purchase terkait
             $purchase = $receivingReport->purchase;
 
             if ($purchase) {
-                // Ubah status menjadi 'Proses Penerimaan'
                 $purchase->update([
                     'status' => 'Proses Penerimaan'
                 ]);

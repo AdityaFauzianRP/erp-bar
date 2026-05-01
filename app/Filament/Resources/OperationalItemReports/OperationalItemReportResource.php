@@ -24,7 +24,7 @@ class OperationalItemReportResource extends Resource
 
     protected static ?string $navigationLabel = 'Laporan Detail Operasional';
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $modelLabel = 'Laporan Detail Operasional';
     protected static ?string $pluralModelLabel = 'Laporan Detail Operasional';
 

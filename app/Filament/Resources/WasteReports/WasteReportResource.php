@@ -24,7 +24,7 @@ class WasteReportResource extends Resource
 
         protected static ?string $navigationLabel = 'Laporan Barang Susak';
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $modelLabel = 'Laporan Barang Susak';
     protected static ?string $pluralModelLabel = 'Laporan Barang Susak';
 

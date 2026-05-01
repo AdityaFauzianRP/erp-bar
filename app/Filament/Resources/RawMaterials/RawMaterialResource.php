@@ -24,9 +24,9 @@ class RawMaterialResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
-    protected static ?string $navigationLabel = 'Bahan Baku Mentah';
+    protected static ?string $navigationLabel = 'Bahan Siap Masak';
 
-    protected static ?string $pluralLabel = 'Bahan Baku Mentah';
+    protected static ?string $pluralLabel = 'Bahan Siap Masak';
 
     public static function form(Schema $schema): Schema
     {
