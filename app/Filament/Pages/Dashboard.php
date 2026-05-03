@@ -2,8 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Actions\Action;
 use Filament\Pages\Dashboard as BaseDashboard;
-use Filament\Tables\Actions\Action;
+
 
 class Dashboard extends BaseDashboard
 {
@@ -19,7 +20,7 @@ class Dashboard extends BaseDashboard
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('refresh')
+        Action::make('refresh')
                 ->label('Refresh')
                 ->action(fn() => $this->refresh()),
         ];

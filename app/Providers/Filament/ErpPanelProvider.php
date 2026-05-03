@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Resources\Users\Widgets\CustomAccountWidget;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -59,14 +60,11 @@ class ErpPanelProvider extends PanelProvider
                     ->label('Manajemen Pengguna')
                     ->icon('heroicon-o-users'),
             ])
-
-            // ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(
                 'panels::head.end',
                 fn(): string => new HtmlString('
                     <style>
-                        /* HANYA BERLAKU DI LIGHT MODE */
                         html:not(.dark) .fi-sidebar { 
                             background-color: white !important; 
                             box-shadow: 2px 0 10px rgba(0,0,0,0.05) !important; 
@@ -79,11 +77,14 @@ class ErpPanelProvider extends PanelProvider
                         html:not(.dark) .fi-sidebar-nav { 
                             background-color: white !important; 
                         }
-
-                        /* OPSIONAL: PERHALUS TAMPILAN DI DARK MODE */
                         html.dark .fi-sidebar {
                             box-shadow: 2px 0 10px rgba(0,0,0,0.3) !important;
                             border-right: 1px solid rgba(255,255,255,0.05) !important;
+                        }
+                        .fi-ta-pagination {
+                            display: flex !important;
+                            justify-content: flex-end !important;
+                            width: 100% !important;
                         }
                     </style>
                 ')
@@ -95,8 +96,7 @@ class ErpPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                // AccountWidget::class,
-                // FilamentInfoWidget::class,
+                CustomAccountWidget::class,
             ])
 
             ->renderHook(
@@ -108,7 +108,7 @@ class ErpPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
-                // AuthenticateSession::class,
+                AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
@@ -116,7 +116,8 @@ class ErpPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make(),
+            FilamentShieldPlugin::make()
+                ->navigationGroup('Manajemen Pengguna')
             ])
             ->authMiddleware([
                 Authenticate::class,
@@ -126,7 +127,7 @@ class ErpPanelProvider extends PanelProvider
                 'profile' => MenuItem::make()
                     ->label('Profil Saya')
                     ->icon('heroicon-o-user-circle')
-                    ->url(fn(): string => EditProfile::getUrl()) // Mengarah ke halaman custom Anda
+                    ->url(fn(): string => EditProfile::getUrl()) 
             ]);
     }
 }

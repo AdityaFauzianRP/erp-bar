@@ -39,7 +39,7 @@ Route::get('/invoices-combined/{record}/print', function ($record) {
 
 
 // Download Dokumen Sales Order 
-Route::get('/proforma-invoices/{record}/print', function (App\Models\ProformaInvoice $record) {
+Route::get('/proforma-invoices/{record}/print', function (ProformaInvoice $record) {
     // Ganti 'print.proforma-invoice' dengan lokasi file blade print Anda
     return view('print.proforma-invoice', compact('record'));
 })->name('pi.print');
