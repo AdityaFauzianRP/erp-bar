@@ -23,13 +23,13 @@ class BranchResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office-2';
 
     // Label yang tampil di sidebar
-    protected static ?string $navigationLabel = 'Cabang Kantor';
+    protected static ?string $navigationLabel = 'Cabang Dapur';
 
     // Group di sidebar
     protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
 
     // Label jamak di header halaman
-    protected static ?string $pluralLabel = 'Cabang Kantor';
+    protected static ?string $pluralLabel = 'Cabang Dapur';
 
 
     public static function form(Schema $schema): Schema

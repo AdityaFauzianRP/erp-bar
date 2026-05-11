@@ -16,38 +16,38 @@ use Filament\Tables\Table;
 
 class AssetResource extends Resource
 {
-    protected static ?string $model = Asset::class;
+    // protected static ?string $model = Asset::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChevronDoubleUp;
+    // protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChevronDoubleUp;
 
-    protected static ?string $navigationLabel = 'Data Aset';
-    protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Aset';
-    protected static ?string $modelLabel = 'Data Aset';
-    protected static ?string $pluralModelLabel = 'Data Aset';
+    // protected static ?string $navigationLabel = 'Data Aset';
+    // protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Aset';
+    // protected static ?string $modelLabel = 'Data Aset';
+    // protected static ?string $pluralModelLabel = 'Data Aset';
 
-    public static function form(Schema $schema): Schema
-    {
-        return AssetForm::configure($schema);
-    }
+    // // public static function form(Schema $schema): Schema
+    // // {
+    // //     return AssetForm::configure($schema);
+    // // }
 
-    public static function table(Table $table): Table
-    {
-        return AssetsTable::configure($table);
-    }
+    // // public static function table(Table $table): Table
+    // // {
+    // //     return AssetsTable::configure($table);
+    // // }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+    // public static function getRelations(): array
+    // {
+    //     return [
+    //         //
+    //     ];
+    // }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListAssets::route('/'),
-            'create' => CreateAsset::route('/create'),
-            'edit' => EditAsset::route('/{record}/edit'),
-        ];
-    }
+    // public static function getPages(): array
+    // {
+    //     return [
+    //         'index' => ListAssets::route('/'),
+    //         'create' => CreateAsset::route('/create'),
+    //         'edit' => EditAsset::route('/{record}/edit'),
+    //     ];
+    // }
 }

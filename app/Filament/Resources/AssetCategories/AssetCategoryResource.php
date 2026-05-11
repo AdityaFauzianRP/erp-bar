@@ -16,38 +16,38 @@ use Filament\Tables\Table;
 
 class AssetCategoryResource extends Resource
 {
-    protected static ?string $model = AssetCategory::class;
+    // protected static ?string $model = AssetCategory::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    // protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $navigationLabel = 'Data Kategori Aset';
-    protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Aset';
-    protected static ?string $modelLabel = 'Data Kategori Aset';
-    protected static ?string $pluralModelLabel = 'Data Kategori Aset';
+    // // protected static ?string $navigationLabel = 'Data Kategori Aset';
+    // // protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Aset';
+    // // protected static ?string $modelLabel = 'Data Kategori Aset';
+    // // protected static ?string $pluralModelLabel = 'Data Kategori Aset';
 
-    public static function form(Schema $schema): Schema
-    {
-        return AssetCategoryForm::configure($schema);
-    }
+    // public static function form(Schema $schema): Schema
+    // {
+    //     return AssetCategoryForm::configure($schema);
+    // }
 
-    public static function table(Table $table): Table
-    {
-        return AssetCategoriesTable::configure($table);
-    }
+    // public static function table(Table $table): Table
+    // {
+    //     return AssetCategoriesTable::configure($table);
+    // }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+    // public static function getRelations(): array
+    // {
+    //     return [
+    //         //
+    //     ];
+    // }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListAssetCategories::route('/'),
-            'create' => CreateAssetCategory::route('/create'),
-            'edit' => EditAssetCategory::route('/{record}/edit'),
-        ];
-    }
+    // public static function getPages(): array
+    // {
+    //     return [
+    //         'index' => ListAssetCategories::route('/'),
+    //         'create' => CreateAssetCategory::route('/create'),
+    //         'edit' => EditAssetCategory::route('/{record}/edit'),
+    //     ];
+    // }
 }

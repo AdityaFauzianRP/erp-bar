@@ -50,9 +50,9 @@ class ErpPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationGroup::make()
                     ->label('Pengeluaran')
                     ->icon('heroicon-o-shopping-bag'),
-                \Filament\Navigation\NavigationGroup::make()
-                    ->label('Manajemen Aset')
-                    ->icon('heroicon-o-building-office-2'),
+                // Filament\Navigation\NavigationGroup::make()
+                //     ->label('Manajemen Aset')
+                //     ->icon('heroicon-o-building-office-2'),
                 \Filament\Navigation\NavigationGroup::make()
                     ->label('Laporan')
                     ->icon('heroicon-o-document-text'),
